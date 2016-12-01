@@ -12,13 +12,30 @@ app.get('/order/:id', function (req, res) {
     	    break;
         }
 		}
-    res.end(JSON.stringify(data2[i]));      
+    res.end(JSON.stringify(ordersList[i]));      
    });
-})
-
-app.get('/orders/:id', function (req, res) {
+});
+ 
+app.put('/order/:id', function (req, res) {
    fs.readFile( __dirname + "/" + "sample-order-dump.json", 'utf8', function (err, data) {
-       console.log( data );
+        ordersList = JSON.parse( data );
+        for (i = 0, len = ordersList.length; i < len; i++) {
+          if ( req.params.id  == ordersList[i].orderId ) {
+          // console.log(ordersList[i]);
+          ordersList[i].state = req.query.state;
+          break;
+        }
+      }
+        fs.writeFile( __dirname + "/" + "sample-order-dump.json", JSON.stringify(ordersList) , function (err, data) {
+   });
+    
+    
+    res.end(JSON.stringify(ordersList[i]));
+    });  
+});
+
+app.get('/orders', function (req, res) {
+   fs.readFile( __dirname + "/" + "sample-order-dump.json", 'utf8', function (err, data) {
        res.end( data );
    });
 })
