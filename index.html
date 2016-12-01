@@ -1,0 +1,72 @@
+<html>
+<head>
+  <title>Express HTML</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div style="margin:100px;">
+    <nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container">
+  </div>
+  </nav>
+    <div class="jumbotron"  style="padding:40px;">
+      <p>Get All your order Details</p>
+      <div ng-app="" ng-controller="orderController">
+          <input type="button" class="btn btn-primary btn-lg" ng-click="fetchAll()" value="getAllOrders">
+          <div class = "checkbox" ng-repeat="order in allOrders" >
+            <label> {{order}} <label>
+          </div>
+          
+          <p>Enter Order ID: <input type="text" ng-model="orderId"></p>
+          <input type="button" class="btn btn-primary btn-lg" ng-click="fetchSingle()" value="getSingleOrder">
+          <div class = "checkbox" ng-repeat = "x in singleOrder" >
+            <label> {{x}} <label>
+          </div>
+
+          <p>Enter Order ID for status updation: <input type="text" ng-model="toBeUpdatedOrderId"></p>
+          <p>Enter news status to be updated:<input type="text" ng-model="toBeUpdatedStatus"></p>
+          <input type="button" class="btn btn-primary btn-lg" ng-click="updateStatus()" value="updateStatus">
+
+      </div>
+
+  <script>
+
+      //var app = angular.module("myApp", []);
+      
+      function orderController($scope,$http) {
+      console.log("shsihri");
+      $scope.orderId = "";
+      $scope.toBeUpdatedOrderId ="";
+      $scope.status = { "state" : ""};
+      $scope.status["state"] = $scope.toBeUpdatedOrderStatus;
+
+
+    //   $http({method: 'GET', url: 'www.google.com/someapi', headers: {
+    // 'Authorization': 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='}});
+      $scope.fetchSingle = function(){ 
+        req_url = 'http://127.0.0.1:8081/order/' + $scope.orderId;
+        $http({url : 'http://127.0.0.1:8081/order/' + $scope.orderId , method : "get"}).then(function(response){ $scope.singleOrder = response.data; });
+        };
+
+
+      $scope.fetchAll = function(){ 
+        $http.get('http://127.0.0.1:8081/orders/').then(function(response){ $scope.allOrders = response.data; });
+
+       // $http.get({url:'http://127.0.0.1:8081/orders',headers: headers2}).then(function(response){ $scope.allOrders = response.data; });
+        };
+
+      $scope.updateStatus = function(){
+        $http({url : 'http://127.0.0.1:8081/order/' + $scope.toBeUpdatedOrderId , method : "put" , data: $scope.status} ). then ( function(response){console.log("done")});
+       };
+      };
+  </script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+
+</body>
+</html>
