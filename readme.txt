@@ -1,4 +1,4 @@
-The app uses package.json file for fetching orders. 
+The app uses sample-order-dump.json file for fetching orders. 
 
 
 1. Go inside App directory
