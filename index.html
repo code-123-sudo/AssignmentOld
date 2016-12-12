@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Express HTML</title>
+  <title>Express</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
@@ -8,6 +8,7 @@
 </head>
 <body>
   <div style="margin:100px;">
+    <h1> Restaurant Order System </h1>
     <nav class="navbar navbar-inverse navbar-static-top">
   <div class="container">
   </div>
@@ -15,11 +16,43 @@
     <div class="jumbotron"  style="padding:40px;">
       <p>Get All your order Details</p>
       <div ng-app="" ng-controller="orderController">
-          <input type="button" class="btn btn-primary btn-lg" ng-click="fetchAll()" value="getAllOrders">
+          <input type="button" class="btn btn-primary btn-lg"  ng-click="fetchAll()" value="getAllOrders">
+          <br>
+          <br>
+          <br>
+          <table style="width:100%">
+            <tr>
+              <th>OrderId</th>
+              <th>Amount</th>
+              <th>Customer Name</th>
+              <th>Customer Phone</th>
+              <th>State</th>
+            </tr>
+          </table>
+
           <div class = "checkbox" ng-repeat="order in allOrders" >
-            <label> {{order}} <label>
-          </div>
+           <table style="width:100%">
+            <tr>
+              <td>{{order.orderId}}</td>
+              <td>{{order.amount}}</td>
+              <td>{{order.customer.name}}</td>
+              <td>{{order.customer.phone}}</td>
+              <td>{{order.state}}</td>
+              <br>
+              <br>
+              <br>
+            </tr>
+           </table>
+           </div>
+          </table>
+
+          <br>
+          <br>
+          <input type="button"  ng-click="prev()" value="prevPage">
+          <input type="button"  ng-click="next()" value="nextPage">
           
+          <br>
+          <br>    
           <p>Enter Order ID: <input type="text" ng-model="orderId"></p>
           <input type="button" class="btn btn-primary btn-lg" ng-click="fetchSingle()" value="getSingleOrder">
           <div class = "checkbox" ng-repeat = "x in singleOrder" >
@@ -27,39 +60,46 @@
           </div>
 
           <p>Enter Order ID for status updation: <input type="text" ng-model="toBeUpdatedOrderId"></p>
-          <p>Enter news status to be updated:<input type="text" ng-model="toBeUpdatedStatus"></p>
+          <p>Enter news status to be updated:<input type="text" ng-model="toBeUpdatedOrderStatus"></p>
           <input type="button" class="btn btn-primary btn-lg" ng-click="updateStatus()" value="updateStatus">
 
       </div>
 
   <script>
-
-      //var app = angular.module("myApp", []);
       
       function orderController($scope,$http) {
-      console.log("shsihri");
       $scope.orderId = "";
       $scope.toBeUpdatedOrderId ="";
-      $scope.status = { "state" : ""};
+      $scope.status = { "state" : "sdsfsfsg"};
+      $scope.toBeUpdatedOrderStatus = "";
       $scope.status["state"] = $scope.toBeUpdatedOrderStatus;
+      $scope.pageNo = 0;
 
+      $scope.next = function(){ 
+        $scope.pageNo = $scope.pageNo + 1;
+        $scope.fetchAll();
+      };
 
-    //   $http({method: 'GET', url: 'www.google.com/someapi', headers: {
-    // 'Authorization': 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='}});
+      $scope.prev = function(){ 
+        if ( $scope.pageNo >= 0  ) {
+          $scope.pageNo = $scope.pageNo - 1;
+          $scope.fetchAll();
+        }
+      };
+
       $scope.fetchSingle = function(){ 
         req_url = 'http://127.0.0.1:8081/order/' + $scope.orderId;
         $http({url : 'http://127.0.0.1:8081/order/' + $scope.orderId , method : "get"}).then(function(response){ $scope.singleOrder = response.data; });
         };
 
-
       $scope.fetchAll = function(){ 
-        $http.get('http://127.0.0.1:8081/orders/').then(function(response){ $scope.allOrders = response.data; });
-
-       // $http.get({url:'http://127.0.0.1:8081/orders',headers: headers2}).then(function(response){ $scope.allOrders = response.data; });
+        $http.get('http://127.0.0.1:8081/orders/?pageNo=' + $scope.pageNo ).then(function(response){ $scope.allOrders = response.data; });
         };
 
       $scope.updateStatus = function(){
-        $http({url : 'http://127.0.0.1:8081/order/' + $scope.toBeUpdatedOrderId , method : "put" , data: $scope.status} ). then ( function(response){console.log("done")});
+        $scope.status["state"] = $scope.toBeUpdatedOrderStatus;
+        $http({url : 'http://127.0.0.1:8081/order/' + $scope.toBeUpdatedOrderId , method : "put" , $scope.status} ). then ( function(response){console.log("done")});
+        
        };
       };
   </script>
